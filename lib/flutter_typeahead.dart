@@ -285,7 +285,7 @@ class TypeAheadFormField<T> extends FormField<String> {
     bool keepSuggestionsOnLoading: true,
     bool keepSuggestionsOnSuggestionSelected: false,
     bool autoFlipDirection: false,
-    bool userGridView: false,
+    bool useGridView: false,
   })  : assert(
             initialValue == null || textFieldConfiguration.controller == null),
         super(
@@ -332,7 +332,7 @@ class TypeAheadFormField<T> extends FormField<String> {
                 keepSuggestionsOnSuggestionSelected:
                     keepSuggestionsOnSuggestionSelected,
                 autoFlipDirection: autoFlipDirection,
-                useGridView: userGridView,
+                useGridView: useGridView,
               );
             });
 

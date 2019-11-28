@@ -1,5 +1,5 @@
 name: flutter_typeahead_web
-version: 1.0.0
+version: 1.0.0+1
 
 description: A highly customizable typeahead (autocomplete) text input field for Flutter with web support
 homepage: https://github.com/sarbagyastha/flutter_typeahead
