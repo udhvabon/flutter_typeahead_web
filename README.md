@@ -6,6 +6,10 @@ users as they type
 
 <img src="https://raw.githubusercontent.com/AbdulRahmanAlHamali/flutter_typeahead/master/flutter_typeahead.gif">
 
+## Note
+This is a fork of [flutter_typeahead](https://pub.dev/packages/flutter_typeahead) to make to support Flutter Web.
+Also includes an option to `useGridView`.
+
 ## Features
 * Shows suggestions in an overlay that floats on top of other widgets
 * Allows you to specify what the suggestions will look like through a
@@ -304,15 +308,11 @@ passing it to the `suggestionsBoxController` property. This will allow you to ma
 resize the suggestions box.
 
 ## For more information
-Visit the [API Documentation](https://pub.dartlang.org/documentation/flutter_typeahead/latest/)
+Visit the [API Documentation](https://pub.dartlang.org/documentation/flutter_typeahead_web/latest/)
 
-## Team:
-| [<img src="https://avatars.githubusercontent.com/u/16646600?v=3" width="100px;"/>](https://github.com/AbdulRahmanAlHamali)|[<img src="https://avatars.githubusercontent.com/u/2034925?v=3" width="100px;"/>](https://github.com/sjmcdowall)|[<img src="https://avatars.githubusercontent.com/u/5499214?v=3" width="100px;"/>](https://github.com/KaYBlitZ)|
-|---|---|---|
-|AbdulRahman AlHamali|S McDowall|Kenneth Liang|
 
 ## Shout out to the contributors!
 This project is the result of the collective effort of contributors who participated effectively by submitting pull requests, reporting issues, and answering questions. Thank you for your proactiveness, and we hope flutter_typeahead made your lifes at least a little easier!
 
 ## How you can help
-[Contribution Guidelines](https://github.com/AbdulRahmanAlHamali/flutter_typeahead/blob/master/CONTRIBUTING.md)
+[Contribution Guidelines](https://github.com/sarbagyastha/flutter_typeahead/blob/master/CONTRIBUTING.md)

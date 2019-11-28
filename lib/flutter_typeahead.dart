@@ -224,7 +224,7 @@
 ///   elevation: 0.0
 /// )
 /// ```
-library flutter_typeahead;
+library flutter_typeahead_web;
 
 import 'dart:async';
 import 'dart:math';
@@ -255,37 +255,38 @@ class TypeAheadFormField<T> extends FormField<String> {
   final TextFieldConfiguration textFieldConfiguration;
 
   /// Creates a [TypeAheadFormField]
-  TypeAheadFormField(
-      {Key key,
-      String initialValue,
-      bool getImmediateSuggestions: false,
-      bool autovalidate: false,
-      FormFieldSetter<String> onSaved,
-      FormFieldValidator<String> validator,
-      ErrorBuilder errorBuilder,
-      WidgetBuilder noItemsFoundBuilder,
-      WidgetBuilder loadingBuilder,
-      Duration debounceDuration: const Duration(milliseconds: 300),
-      SuggestionsBoxDecoration suggestionsBoxDecoration:
-          const SuggestionsBoxDecoration(),
-      SuggestionsBoxController suggestionsBoxController,
-      @required SuggestionSelectionCallback<T> onSuggestionSelected,
-      @required ItemBuilder<T> itemBuilder,
-      @required SuggestionsCallback<T> suggestionsCallback,
-      double suggestionsBoxVerticalOffset: 5.0,
-      this.textFieldConfiguration: const TextFieldConfiguration(),
-      AnimationTransitionBuilder transitionBuilder,
-      Duration animationDuration: const Duration(milliseconds: 500),
-      double animationStart: 0.25,
-      AxisDirection direction: AxisDirection.down,
-      bool hideOnLoading: false,
-      bool hideOnEmpty: false,
-      bool hideOnError: false,
-      bool hideSuggestionsOnKeyboardHide: true,
-      bool keepSuggestionsOnLoading: true,
-      bool keepSuggestionsOnSuggestionSelected: false,
-      bool autoFlipDirection: false})
-      : assert(
+  TypeAheadFormField({
+    Key key,
+    String initialValue,
+    bool getImmediateSuggestions: false,
+    bool autovalidate: false,
+    FormFieldSetter<String> onSaved,
+    FormFieldValidator<String> validator,
+    ErrorBuilder errorBuilder,
+    WidgetBuilder noItemsFoundBuilder,
+    WidgetBuilder loadingBuilder,
+    Duration debounceDuration: const Duration(milliseconds: 300),
+    SuggestionsBoxDecoration suggestionsBoxDecoration:
+        const SuggestionsBoxDecoration(),
+    SuggestionsBoxController suggestionsBoxController,
+    @required SuggestionSelectionCallback<T> onSuggestionSelected,
+    @required ItemBuilder<T> itemBuilder,
+    @required SuggestionsCallback<T> suggestionsCallback,
+    double suggestionsBoxVerticalOffset: 5.0,
+    this.textFieldConfiguration: const TextFieldConfiguration(),
+    AnimationTransitionBuilder transitionBuilder,
+    Duration animationDuration: const Duration(milliseconds: 500),
+    double animationStart: 0.25,
+    AxisDirection direction: AxisDirection.down,
+    bool hideOnLoading: false,
+    bool hideOnEmpty: false,
+    bool hideOnError: false,
+    bool hideSuggestionsOnKeyboardHide: true,
+    bool keepSuggestionsOnLoading: true,
+    bool keepSuggestionsOnSuggestionSelected: false,
+    bool autoFlipDirection: false,
+    bool userGridView: false,
+  })  : assert(
             initialValue == null || textFieldConfiguration.controller == null),
         super(
             key: key,
@@ -331,6 +332,7 @@ class TypeAheadFormField<T> extends FormField<String> {
                 keepSuggestionsOnSuggestionSelected:
                     keepSuggestionsOnSuggestionSelected,
                 autoFlipDirection: autoFlipDirection,
+                useGridView: userGridView,
               );
             });
 
@@ -659,33 +661,40 @@ class TypeAheadField<T> extends StatefulWidget {
   /// Defaults to false
   final bool autoFlipDirection;
 
+  /// If set to true, suggestion will be shown in [GridView].
+  /// Otherwise, [ListView] will be used.
+  ///
+  /// Default is false.
+  final bool useGridView;
+
   /// Creates a [TypeAheadField]
-  TypeAheadField(
-      {Key key,
-      @required this.suggestionsCallback,
-      @required this.itemBuilder,
-      @required this.onSuggestionSelected,
-      this.textFieldConfiguration: const TextFieldConfiguration(),
-      this.suggestionsBoxDecoration: const SuggestionsBoxDecoration(),
-      this.debounceDuration: const Duration(milliseconds: 300),
-      this.suggestionsBoxController,
-      this.loadingBuilder,
-      this.noItemsFoundBuilder,
-      this.errorBuilder,
-      this.transitionBuilder,
-      this.animationStart: 0.25,
-      this.animationDuration: const Duration(milliseconds: 500),
-      this.getImmediateSuggestions: false,
-      this.suggestionsBoxVerticalOffset: 5.0,
-      this.direction: AxisDirection.down,
-      this.hideOnLoading: false,
-      this.hideOnEmpty: false,
-      this.hideOnError: false,
-      this.hideSuggestionsOnKeyboardHide: true,
-      this.keepSuggestionsOnLoading: true,
-      this.keepSuggestionsOnSuggestionSelected: false,
-      this.autoFlipDirection: false})
-      : assert(suggestionsCallback != null),
+  TypeAheadField({
+    Key key,
+    @required this.suggestionsCallback,
+    @required this.itemBuilder,
+    @required this.onSuggestionSelected,
+    this.textFieldConfiguration: const TextFieldConfiguration(),
+    this.suggestionsBoxDecoration: const SuggestionsBoxDecoration(),
+    this.debounceDuration: const Duration(milliseconds: 300),
+    this.suggestionsBoxController,
+    this.loadingBuilder,
+    this.noItemsFoundBuilder,
+    this.errorBuilder,
+    this.transitionBuilder,
+    this.animationStart: 0.25,
+    this.animationDuration: const Duration(milliseconds: 500),
+    this.getImmediateSuggestions: false,
+    this.suggestionsBoxVerticalOffset: 5.0,
+    this.direction: AxisDirection.down,
+    this.hideOnLoading: false,
+    this.hideOnEmpty: false,
+    this.hideOnError: false,
+    this.hideSuggestionsOnKeyboardHide: true,
+    this.keepSuggestionsOnLoading: true,
+    this.keepSuggestionsOnSuggestionSelected: false,
+    this.autoFlipDirection: false,
+    this.useGridView: false,
+  })  : assert(suggestionsCallback != null),
         assert(itemBuilder != null),
         assert(onSuggestionSelected != null),
         assert(animationStart != null &&
@@ -712,6 +721,7 @@ class _TypeAheadFieldState<T> extends State<TypeAheadField<T>>
 
   TextEditingController get _effectiveController =>
       widget.textFieldConfiguration.controller ?? _textEditingController;
+
   FocusNode get _effectiveFocusNode =>
       widget.textFieldConfiguration.focusNode ?? _focusNode;
   VoidCallback _focusNodeListener;
@@ -720,8 +730,10 @@ class _TypeAheadFieldState<T> extends State<TypeAheadField<T>>
 
   // Timer that resizes the suggestion box on each tick. Only active when the user is scrolling.
   Timer _resizeOnScrollTimer;
+
   // The rate at which the suggestion box will resize when the user is scrolling
   final Duration _resizeOnScrollRefreshRate = const Duration(milliseconds: 500);
+
   // Will have a value if the typeahead is inside a scrollable widget
   ScrollPosition _scrollPosition;
 
@@ -845,6 +857,7 @@ class _TypeAheadFieldState<T> extends State<TypeAheadField<T>>
         hideOnEmpty: widget.hideOnEmpty,
         hideOnError: widget.hideOnError,
         keepSuggestionsOnLoading: widget.keepSuggestionsOnLoading,
+        useGridView: widget.useGridView,
       );
 
       double w = _suggestionsBox.textBoxWidth;
@@ -946,6 +959,7 @@ class _SuggestionsList<T> extends StatefulWidget {
   final bool hideOnEmpty;
   final bool hideOnError;
   final bool keepSuggestionsOnLoading;
+  final bool useGridView;
 
   _SuggestionsList({
     @required this.suggestionsBox,
@@ -967,6 +981,7 @@ class _SuggestionsList<T> extends StatefulWidget {
     this.hideOnEmpty,
     this.hideOnError,
     this.keepSuggestionsOnLoading,
+    this.useGridView,
   });
 
   @override
@@ -1192,22 +1207,58 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
   }
 
   Widget createSuggestionsWidget() {
-    Widget child = ListView(
-      padding: EdgeInsets.zero,
-      primary: false,
-      shrinkWrap: true,
-      reverse: widget.suggestionsBox.direction == AxisDirection.down
-          ? false
-          : true, // reverses the list to start at the bottom
-      children: this._suggestions.map((T suggestion) {
-        return InkWell(
-          child: widget.itemBuilder(context, suggestion),
-          onTap: () {
-            widget.onSuggestionSelected(suggestion);
-          },
-        );
-      }).toList(),
-    );
+    Widget child;
+    if (widget.useGridView) {
+      child = GridView(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 8.0,
+          mainAxisSpacing: 8.0,
+        ),
+        padding: EdgeInsets.all(8.0),
+        primary: false,
+        shrinkWrap: true,
+        reverse: widget.suggestionsBox.direction == AxisDirection.down
+            ? false
+            : true,
+        children: this._suggestions.map((T suggestion) {
+          return Stack(
+            children: [
+              Positioned.fill(
+                bottom: 0.0,
+                child: widget.itemBuilder(context, suggestion),
+              ),
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    widget.onSuggestionSelected(suggestion);
+                  },
+                ),
+              ),
+            ],
+          );
+        }).toList(),
+      );
+    } else {
+      child = ListView(
+        padding: EdgeInsets.zero,
+        primary: false,
+        shrinkWrap: true,
+        reverse: widget.suggestionsBox.direction == AxisDirection.down
+            ? false
+            : true,
+        // reverses the list to start at the bottom
+        children: this._suggestions.map((T suggestion) {
+          return InkWell(
+            child: widget.itemBuilder(context, suggestion),
+            onTap: () {
+              widget.onSuggestionSelected(suggestion);
+            },
+          );
+        }).toList(),
+      );
+    }
 
     if (widget.decoration.hasScrollbar) {
       child = Scrollbar(child: child);

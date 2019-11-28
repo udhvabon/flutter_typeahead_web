@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_typeahead/cupertino_flutter_typeahead.dart';
+import 'package:flutter_typeahead_web/cupertino_flutter_typeahead.dart';
 
 import 'package:example/data.dart';
 

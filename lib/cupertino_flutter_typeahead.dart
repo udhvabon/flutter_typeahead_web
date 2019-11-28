@@ -13,7 +13,7 @@
 /// version that accepts validation, submitting, etc.
 /// * Provides high customizability; you can customize the suggestion box decoration,
 /// the loading bar, the animation, the debounce duration, etc.
-library cupertino_flutter_typeahead;
+library cupertino_flutter_typeahead_web;
 
 import 'dart:async';
 import 'dart:core';
@@ -91,7 +91,8 @@ class CupertinoTypeAheadFormField<T> extends FormField<String> {
       bool hideSuggestionsOnKeyboardHide: true,
       bool keepSuggestionsOnLoading: true,
       bool keepSuggestionsOnSuggestionSelected: false,
-      bool autoFlipDirection: false})
+      bool autoFlipDirection: false,
+      bool useGridView: false})
       : assert(
             initialValue == null || textFieldConfiguration.controller == null),
         super(
@@ -136,6 +137,7 @@ class CupertinoTypeAheadFormField<T> extends FormField<String> {
                 keepSuggestionsOnSuggestionSelected:
                     keepSuggestionsOnSuggestionSelected,
                 autoFlipDirection: autoFlipDirection,
+                useGridView: useGridView,
               );
             });
 
@@ -463,6 +465,12 @@ class CupertinoTypeAheadField<T> extends StatefulWidget {
   /// Defaults to false
   final bool autoFlipDirection;
 
+  /// If set to true, suggestion will be shown in [GridView].
+  /// Otherwise, [ListView] will be used.
+  ///
+  /// Default is false.
+  final bool useGridView;
+
   /// Creates a [CupertinoTypeAheadField]
   CupertinoTypeAheadField(
       {Key key,
@@ -488,7 +496,8 @@ class CupertinoTypeAheadField<T> extends StatefulWidget {
       this.hideSuggestionsOnKeyboardHide: true,
       this.keepSuggestionsOnLoading: true,
       this.keepSuggestionsOnSuggestionSelected: false,
-      this.autoFlipDirection: false})
+      this.autoFlipDirection: false,
+      this.useGridView: false})
       : assert(suggestionsCallback != null),
         assert(itemBuilder != null),
         assert(onSuggestionSelected != null),
@@ -625,32 +634,32 @@ class _CupertinoTypeAheadFieldState<T> extends State<CupertinoTypeAheadField<T>>
   void _initOverlayEntry() {
     this._suggestionsBox._overlayEntry = OverlayEntry(builder: (context) {
       final suggestionsList = _SuggestionsList<T>(
-        suggestionsBox: _suggestionsBox,
-        decoration: widget.suggestionsBoxDecoration,
-        debounceDuration: widget.debounceDuration,
-        controller: this._effectiveController,
-        loadingBuilder: widget.loadingBuilder,
-        noItemsFoundBuilder: widget.noItemsFoundBuilder,
-        errorBuilder: widget.errorBuilder,
-        transitionBuilder: widget.transitionBuilder,
-        suggestionsCallback: widget.suggestionsCallback,
-        animationDuration: widget.animationDuration,
-        animationStart: widget.animationStart,
-        getImmediateSuggestions: widget.getImmediateSuggestions,
-        onSuggestionSelected: (T selection) {
-          if (!widget.keepSuggestionsOnSuggestionSelected) {
-            this._effectiveFocusNode.unfocus();
-            this._suggestionsBox.close();
-          }
-          widget.onSuggestionSelected(selection);
-        },
-        itemBuilder: widget.itemBuilder,
-        direction: _suggestionsBox.direction,
-        hideOnLoading: widget.hideOnLoading,
-        hideOnEmpty: widget.hideOnEmpty,
-        hideOnError: widget.hideOnError,
-        keepSuggestionsOnLoading: widget.keepSuggestionsOnLoading,
-      );
+          suggestionsBox: _suggestionsBox,
+          decoration: widget.suggestionsBoxDecoration,
+          debounceDuration: widget.debounceDuration,
+          controller: this._effectiveController,
+          loadingBuilder: widget.loadingBuilder,
+          noItemsFoundBuilder: widget.noItemsFoundBuilder,
+          errorBuilder: widget.errorBuilder,
+          transitionBuilder: widget.transitionBuilder,
+          suggestionsCallback: widget.suggestionsCallback,
+          animationDuration: widget.animationDuration,
+          animationStart: widget.animationStart,
+          getImmediateSuggestions: widget.getImmediateSuggestions,
+          onSuggestionSelected: (T selection) {
+            if (!widget.keepSuggestionsOnSuggestionSelected) {
+              this._effectiveFocusNode.unfocus();
+              this._suggestionsBox.close();
+            }
+            widget.onSuggestionSelected(selection);
+          },
+          itemBuilder: widget.itemBuilder,
+          direction: _suggestionsBox.direction,
+          hideOnLoading: widget.hideOnLoading,
+          hideOnEmpty: widget.hideOnEmpty,
+          hideOnError: widget.hideOnError,
+          keepSuggestionsOnLoading: widget.keepSuggestionsOnLoading,
+          useGridView: widget.useGridView);
 
       double w = _suggestionsBox.textBoxWidth;
       if (widget.suggestionsBoxDecoration.constraints != null) {
@@ -757,6 +766,7 @@ class _SuggestionsList<T> extends StatefulWidget {
   final bool hideOnEmpty;
   final bool hideOnError;
   final bool keepSuggestionsOnLoading;
+  final bool useGridView;
 
   _SuggestionsList({
     @required this.suggestionsBox,
@@ -778,6 +788,7 @@ class _SuggestionsList<T> extends StatefulWidget {
     this.hideOnEmpty,
     this.hideOnError,
     this.keepSuggestionsOnLoading,
+    this.useGridView,
   });
 
   @override
@@ -1027,21 +1038,20 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
   }
 
   Widget createSuggestionsWidget() {
-    Widget child = Container(
-      decoration: BoxDecoration(
-        color: CupertinoColors.white,
-        border: Border.all(
-          color: CupertinoColors.extraLightBackgroundGray,
-          width: 1.0,
+    Widget child;
+    if (widget.useGridView) {
+      child = GridView(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 8.0,
+          mainAxisSpacing: 8.0,
         ),
-      ),
-      child: ListView(
-        padding: EdgeInsets.zero,
+        padding: EdgeInsets.all(8.0),
         primary: false,
         shrinkWrap: true,
         reverse: widget.suggestionsBox.direction == AxisDirection.down
             ? false
-            : true, // reverses the list to start at the bottom
+            : true,
         children: this._suggestions.map((T suggestion) {
           return GestureDetector(
             child: widget.itemBuilder(context, suggestion),
@@ -1050,7 +1060,36 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
             },
           );
         }).toList(),
+      );
+    } else {
+      child = ListView(
+        padding: EdgeInsets.zero,
+        primary: false,
+        shrinkWrap: true,
+        reverse: widget.suggestionsBox.direction == AxisDirection.down
+            ? false
+            : true,
+        // reverses the list to start at the bottom
+        children: this._suggestions.map((T suggestion) {
+          return GestureDetector(
+            child: widget.itemBuilder(context, suggestion),
+            onTap: () {
+              widget.onSuggestionSelected(suggestion);
+            },
+          );
+        }).toList(),
+      );
+    }
+
+    child = Container(
+      decoration: BoxDecoration(
+        color: CupertinoColors.white,
+        border: Border.all(
+          color: CupertinoColors.extraLightBackgroundGray,
+          width: 1.0,
+        ),
       ),
+      child: child,
     );
 
     if (widget.decoration.hasScrollbar) {
