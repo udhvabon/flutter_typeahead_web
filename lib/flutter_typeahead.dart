@@ -781,22 +781,26 @@ class _TypeAheadFieldState<T> extends State<TypeAheadField<T>>
       if (_effectiveFocusNode.hasFocus) {
         this._suggestionsBox.open();
       } else {
-        this._suggestionsBox.close();
+        //this._suggestionsBox.close();
       }
     };
 
     WidgetsBinding.instance.addPostFrameCallback((duration) {
-      if (mounted) {
-        this._initOverlayEntry();
-        // calculate initial suggestions list size
-        this._suggestionsBox.resize();
+      try {
+        if (mounted) {
+          this._initOverlayEntry();
+          // calculate initial suggestions list size
+          this._suggestionsBox.resize();
 
-        this._effectiveFocusNode.addListener(_focusNodeListener);
+          this._effectiveFocusNode.addListener(_focusNodeListener);
 
-        // in case we already missed the focus event
-        if (this._effectiveFocusNode.hasFocus) {
-          this._suggestionsBox.open();
+          // in case we already missed the focus event
+          if (this._effectiveFocusNode.hasFocus) {
+            this._suggestionsBox.open();
+          }
         }
+      }catch (e){
+        print(e);
       }
     });
   }

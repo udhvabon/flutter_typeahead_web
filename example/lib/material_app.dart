@@ -46,14 +46,15 @@ class NavigationExample extends StatelessWidget {
             height: 10.0,
           ),
           TypeAheadField(
+
             textFieldConfiguration: TextFieldConfiguration(
-              autofocus: true,
+              //autofocus: true,
               style: DefaultTextStyle.of(context)
                   .style
                   .copyWith(fontStyle: FontStyle.italic),
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  hintText: 'What are you looking for?'),
+                  hintText: 'What are you looking for? 00'),
             ),
             suggestionsCallback: (pattern) async {
               return await BackendService.getSuggestions(pattern);
@@ -157,6 +158,7 @@ class ScrollExample extends StatelessWidget {
       SizedBox(height: 200),
       TypeAheadField<String>(
         getImmediateSuggestions: true,
+        useGridView: true,
         textFieldConfiguration: TextFieldConfiguration(
           decoration: InputDecoration(
               border: OutlineInputBorder(),
